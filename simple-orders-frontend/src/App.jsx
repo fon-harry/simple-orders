@@ -2,8 +2,15 @@ import { useState } from 'react';
 import reactLogo from './assets/react.svg';
 import './App.css';
 
+import api from './api/index.js';
+
 function App() {
   const [count, setCount] = useState(0);
+
+  (async () => {
+    const result = await api.Orders.getOrders();
+    console.log(result);
+  })();
 
   return (
     <div className="App">
