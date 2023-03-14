@@ -1,3 +1,11 @@
+const serializeOrder = (order) => ({
+  id: order.id || undefined,
+  name: order.name || undefined,
+  phoneNumber: order.phone_number || undefined,
+  address: order.address || undefined,
+  status: order.status || undefined,
+  createdAt: order.createdAt || undefined,
+});
 export default (database) => {
   const orderFieldsMapper = {
     phoneNumber: 'phone_number',
@@ -7,14 +15,14 @@ export default (database) => {
     const result = await database.query('SELECT * FROM orders WHERE id = $1;', [
       id,
     ]);
-    return result.rows[0];
+    return serializeOrder(result.rows[0]);
   }
 
   async function getOrders() {
     const result = await database.query(
       'SELECT * FROM orders ORDER BY created_at;',
     );
-    return result.rows;
+    return result.rows.map((order) => serializeOrder(order));
   }
 
   async function createOrder(order) {
