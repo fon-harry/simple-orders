@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { TextField, Button, MenuItem, Box } from '@mui/material';
+import { TextField, Button, MenuItem, Box, Alert } from '@mui/material';
 
 import api from '../api/index.js';
 
@@ -23,6 +23,7 @@ const orderStatuses = [
 
 function OrderForm({ id }) {
   const navigate = useNavigate();
+  const [isError, setIsError] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phoneNumber: '',
@@ -45,6 +46,13 @@ function OrderForm({ id }) {
   }, [id]);
 
   const handleSave = async () => {
+    if (
+      formData.status === 'confirmed' &&
+      (!formData.name || !formData.phoneNumber || !formData.address)
+    ) {
+      setIsError(true);
+      return;
+    }
     const order = { ...formData, status: formData.status || undefined };
     id
       ? await api.Orders.updateOrder(id, order)
@@ -61,7 +69,7 @@ function OrderForm({ id }) {
       }}
     >
       <TextField
-        sx={{ m: 1, minWidth: 300 }}
+        sx={{ m: 1, minWidth: 500 }}
         label="Name"
         id="name"
         value={formData.name}
@@ -69,7 +77,7 @@ function OrderForm({ id }) {
         size="small"
       />
       <TextField
-        sx={{ m: 1, minWidth: 300 }}
+        sx={{ m: 1, minWidth: 500 }}
         label="Phone number"
         id="phoneNumber"
         value={formData.phoneNumber}
@@ -79,7 +87,7 @@ function OrderForm({ id }) {
         size="small"
       />
       <TextField
-        sx={{ m: 1, minWidth: 300 }}
+        sx={{ m: 1, minWidth: 500 }}
         label="Address"
         id="address"
         value={formData.address}
@@ -87,12 +95,13 @@ function OrderForm({ id }) {
         size="small"
       />
       <TextField
-        sx={{ m: 1, minWidth: 300 }}
+        sx={{ m: 1, minWidth: 500 }}
         label="Status"
         id="status"
         select
         value={formData.status}
         onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+        disabled={id ? false : true}
         size="small"
       >
         {orderStatuses.map((option) => (
@@ -114,6 +123,11 @@ function OrderForm({ id }) {
           Cancel
         </Button>
       </Box>
+      {isError && (
+        <Alert severity="warning">
+          All fields must be filled in to confirm the order.
+        </Alert>
+      )}
     </Box>
   );
 }
