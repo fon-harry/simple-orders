@@ -1,40 +1,27 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Container } from '@mui/system';
 
-import api from './api/index.js';
+import AppBar from './AppBar.jsx';
+
+import OrdersPage from './pages/OrdersPage.jsx';
+import OrderPage from './pages/OrderPage.jsx';
+import NewOrderPage from './pages/NewOrderPage.jsx';
+import StatisticsPage from './pages/StatisticsPage.jsx';
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  (async () => {
-    const result = await api.Orders.getOrders();
-    console.log(result);
-  })();
-
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    <BrowserRouter>
+      <AppBar />
+      <Container sx={{ paddingTop: '60px' }}>
+        <Routes>
+          <Route path="/" element={<Navigate to="/orders" />} />
+          <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/new-order" element={<NewOrderPage />} />
+          <Route path="/orders/:id" element={<OrderPage />} />
+          <Route path="/statistics" element={<StatisticsPage />} />
+        </Routes>
+      </Container>
+    </BrowserRouter>
   );
 }
 
